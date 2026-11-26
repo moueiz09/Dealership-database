@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Dealership{% endblock %} | Dealership Database</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header>
+    <p class="brand">Dealership Database</p>
+    <nav aria-label="Main">
+      <ul>
+        {% set pages = [('home','Home'),('vehicles','Vehicles'),('customers','Customers'),('employees','Employees'),('transactions','Sales'),('reports','Reports')] %}
+        {% for ep, label in pages %}
+        <li><a href="{{ url_for(ep) }}" {% if request.endpoint and request.endpoint.startswith(ep.rstrip('s')) %}aria-current="page"{% endif %}>{{ label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}" role="{{ 'alert' if cat == 'error' else 'status' }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer><p>ITEC 315 team project: Akachi Anyanwu, Moueiz Ilyas, Yordy Lagos-Barrios</p></footer>
+</body>
+</html>

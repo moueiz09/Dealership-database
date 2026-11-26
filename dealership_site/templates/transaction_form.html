@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Record a sale{% endblock %}
+{% block content %}
+<h1>Record a sale</h1>
+<p>Each sale covers one vehicle, one customer and one salesperson. A vehicle can only be sold once.</p>
+<form method="post" class="stack">
+  <div class="field"><label for="vin">Vehicle (not yet sold)</label>
+    <select id="vin" name="vin" required>
+      <option value="">Choose a vehicle</option>
+      {% for v in avail %}<option value="{{ v.VIN }}" {{ 'selected' if t.get('vin') == v.VIN }}>{{ v.VehicleYear }} {{ v.Make }} {{ v.Model }} ({{ v.VIN }})</option>{% endfor %}
+    </select></div>
+  <div class="field"><label for="customer">Customer</label>
+    <select id="customer" name="customer" required>
+      <option value="">Choose a customer</option>
+      {% for c in custs %}<option value="{{ c.CustomerID }}" {{ 'selected' if t.get('customer') == c.CustomerID }}>{{ c.Name }} ({{ c.CustomerID }})</option>{% endfor %}
+    </select>
+    <p class="hint">Customer not listed? <a href="{{ url_for('customer_new') }}">Add them first</a>.</p></div>
+  <div class="field"><label for="seller">Salesperson</label>
+    <select id="seller" name="seller" required>
+      <option value="">Choose a salesperson</option>
+      {% for s in sellers %}<option value="{{ s.EmployeeID }}" {{ 'selected' if t.get('seller')|string == s.EmployeeID|string }}>{{ s.Name }}</option>{% endfor %}
+    </select></div>
+  <div class="field"><label for="amount">Sale amount ($)</label>
+    <input id="amount" name="amount" type="number" min="1" value="{{ t.get('amount') or '' }}" required></div>
+  <div class="field"><label for="date">Sale date</label>
+    <input id="date" name="date" type="date" value="{{ t.get('date') or today }}" required></div>
+  <button type="submit">Save sale</button>
+  <a class="btn secondary" href="{{ url_for('transactions') }}">Cancel</a>
+</form>
+{% endblock %}

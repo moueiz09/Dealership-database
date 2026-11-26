@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Add employee{% endblock %}
+{% block content %}
+<h1>Add employee</h1>
+<form method="post" class="stack">
+  <div class="field"><label for="name">Full name</label>
+    <input id="name" name="name" value="{{ e.get('name') or '' }}" maxlength="100" required autocomplete="off"></div>
+  <div class="field"><label for="ssn">SSN (9 digits, no dashes)</label>
+    <input id="ssn" name="ssn" value="{{ e.get('ssn') or '' }}" pattern="[0-9]{9}" maxlength="9" inputmode="numeric" required autocomplete="off"></div>
+  <div class="field"><label for="hired">Hiring date</label>
+    <input id="hired" name="hired" type="date" value="{{ e.get('hired') or today }}" required></div>
+  <fieldset class="radio-row">
+    <legend>Role</legend>
+    <label><input type="radio" name="role" value="Salesperson" checked> Salesperson</label>
+    <label><input type="radio" name="role" value="Manager"> Manager</label>
+    <label><input type="radio" name="role" value="Neither"> Neither</label>
+  </fieldset>
+  <div class="field" id="manager-field">
+    <label for="manager">Manager (for salespeople)</label>
+    <select id="manager" name="manager">
+      {% for m in managers %}<option value="{{ m.EmployeeID }}">{{ m.Name }}</option>{% endfor %}
+    </select>
+    {% if not managers %}<p class="hint">Add a manager first before adding salespeople.</p>{% endif %}
+  </div>
+  <button type="submit">Save employee</button>
+  <a class="btn secondary" href="{{ url_for('employees') }}">Cancel</a>
+</form>
+<script>
+  (function () {
+    var field = document.getElementById('manager-field');
+    var sel = document.getElementById('manager');
+    function sync() {
+      var on = document.querySelector('input[name="role"]:checked').value === 'Salesperson';
+      field.hidden = !on; sel.disabled = !on;
+    }
+    document.querySelectorAll('input[name="role"]').forEach(function (r) { r.addEventListener('change', sync); });
+    sync();
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} customer{% endblock %}
+{% block content %}
+<h1>{{ 'Edit' if editing else 'Add' }} customer</h1>
+<form method="post" class="stack">
+  <div class="field">
+    <label for="name">Full name</label>
+    <input id="name" name="name" value="{{ c.get('name') or c.get('Name') or '' }}" maxlength="100" required autocomplete="off">
+    {% if not editing %}<p class="hint">A Customer ID is assigned automatically.</p>{% endif %}
+  </div>
+  <button type="submit">Save customer</button>
+  <a class="btn secondary" href="{{ url_for('customers') }}">Cancel</a>
+</form>
+{% endblock %}

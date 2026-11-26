@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} vehicle{% endblock %}
+{% block content %}
+<h1>{{ 'Edit' if editing else 'Add' }} vehicle</h1>
+{% set vt = v.get('vtype') or v.get('Type') or 'New' %}
+<form method="post" class="stack">
+  <div class="field">
+    <label for="vin">VIN</label>
+    <input id="vin" name="vin" value="{{ v.get('vin') or v.get('VIN') or '' }}" maxlength="17" required
+           {% if editing %}readonly aria-describedby="vin-hint"{% endif %}>
+    <p class="hint" id="vin-hint">{{ 'The VIN cannot be changed.' if editing else 'Up to 17 characters.' }}</p>
+  </div>
+  <div class="field"><label for="make">Make</label>
+    <input id="make" name="make" value="{{ v.get('make') or v.get('Make') or '' }}" maxlength="40" required></div>
+  <div class="field"><label for="model">Model</label>
+    <input id="model" name="model" value="{{ v.get('model') or v.get('Model') or '' }}" maxlength="40" required></div>
+  <div class="field"><label for="year">Model year</label>
+    <input id="year" name="year" type="number" min="1980" max="2027" value="{{ v.get('year') or v.get('VehicleYear') or '' }}" required></div>
+  <div class="field"><label for="color">Color</label>
+    <input id="color" name="color" value="{{ v.get('color') or v.get('Color') or '' }}" maxlength="40" required></div>
+  <div class="field"><label for="status">Status</label>
+    <select id="status" name="status" required>
+      {% set cur = v.get('status') or v.get('Status') or 'Available' %}
+      {% for s in statuses %}<option {{ 'selected' if s == cur }}>{{ s }}</option>{% endfor %}
+    </select></div>
+
+  {% if editing %}
+    <input type="hidden" name="vtype" value="{{ vt }}">
+    <p><strong>Type:</strong> {{ vt }} (cannot be changed)</p>
+  {% else %}
+  <fieldset class="radio-row">
+    <legend>Vehicle type</legend>
+    <label><input type="radio" name="vtype" value="New" {{ 'checked' if vt == 'New' }}> New</label>
+    <label><input type="radio" name="vtype" value="Used" {{ 'checked' if vt == 'Used' }}> Used</label>
+  </fieldset>
+  {% endif %}
+
+  <fieldset id="new-fields">
+    <legend>New vehicle details</legend>
+    <div class="field"><label for="msrp">MSRP ($)</label>
+      <input id="msrp" name="msrp" type="number" min="1" value="{{ v.get('msrp') or v.get('MSRP') or '' }}"></div>
+    <div class="field"><label for="special">Manufacturer special</label>
+      <input id="special" name="special" maxlength="100" value="{{ v.get('special') or v.get('ManufacturerSpecial') or '' }}"></div>
+  </fieldset>
+
+  <fieldset id="used-fields">
+    <legend>Used vehicle details</legend>
+    <div class="field"><label for="mileage">Mileage</label>
+      <input id="mileage" name="mileage" type="number" min="0" value="{{ v.get('mileage') or v.get('Mileage') or '' }}"></div>
+    <div class="field"><label for="warranty">Remaining factory warranty (optional)</label>
+      <input id="warranty" name="warranty" maxlength="100" value="{{ v.get('warranty') or v.get('FactoryWarranty') or '' }}"></div>
+    <div class="field"><label for="spent">Amount dealership paid ($)</label>
+      <input id="spent" name="spent" type="number" min="0" value="{{ v.get('spent') or v.get('TotalMoneySpent') or '' }}"></div>
+  </fieldset>
+
+  <button type="submit">Save vehicle</button>
+  <a class="btn secondary" href="{{ url_for('vehicles') }}">Cancel</a>
+</form>
+
+<script>
+  (function () {
+    var editing = {{ 'true' if editing else 'false' }};
+    var fixed = "{{ vt }}";
+    function current() {
+      if (editing) return fixed;
+      var r = document.querySelector('input[name="vtype"]:checked');
+      return r ? r.value : 'New';
+    }
+    function sync() {
+      var t = current();
+      var groups = {New: document.getElementById('new-fields'), Used: document.getElementById('used-fields')};
+      Object.keys(groups).forEach(function (k) {
+        var on = (k === t);
+        groups[k].hidden = !on;
+        groups[k].querySelectorAll('input').forEach(function (i) {
+          i.disabled = !on;
+          i.required = on && i.name !== 'warranty';
+        });
+      });
+    }
+    document.querySelectorAll('input[name="vtype"]').forEach(function (r) { r.addEventListener('change', sync); });
+    sync();
+  })();
+</script>
+{% endblock %}

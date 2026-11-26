@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block content %}
+<h1>Employees</h1>
+<p class="toolbar"><a class="btn" href="{{ url_for('employee_new') }}">Add employee</a></p>
+<div class="table-wrap">
+<table>
+  <caption>All employees with their role</caption>
+  <thead><tr>
+    <th scope="col">ID</th><th scope="col">Name</th><th scope="col">Role</th><th scope="col">Manager</th>
+    <th scope="col">Vehicles sold</th><th scope="col">Hired</th><th scope="col">Actions</th>
+  </tr></thead>
+  <tbody>
+  {% for r in rows %}
+  <tr>
+    <th scope="row">{{ r.EmployeeID }}</th>
+    <td>{{ r.Name }}</td>
+    <td>{{ r.Role }}</td>
+    <td>{{ r.ManagerName or '' }}</td>
+    <td>{{ r.SalesMetrics if r.SalesMetrics is not none else '' }}</td>
+    <td>{{ r.HiringDate }}</td>
+    <td class="actions">
+      <form method="post" action="{{ url_for('employee_delete', eid=r.EmployeeID) }}" onsubmit="return confirm('Delete this employee?')">
+        <button class="danger" type="submit" aria-label="Delete employee {{ r.Name }}">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7">No employees yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="hint">An employee is a manager, a salesperson, or neither, never both. SSNs are stored in the database but not displayed.</p>
+{% endblock %}

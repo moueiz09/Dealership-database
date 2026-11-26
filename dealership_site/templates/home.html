@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Dealership Database</h1>
+<p>Manage inventory, customers, employees and sales for a single-location dealership selling new and used vehicles.</p>
+<h2>At a glance</h2>
+<ul class="cards">
+  <li><strong>{{ stats.vehicles }}</strong> vehicles in the system</li>
+  <li><strong>{{ stats.available }}</strong> available for sale</li>
+  <li><strong>{{ stats.customers }}</strong> customers</li>
+  <li><strong>{{ stats.sales }}</strong> sales recorded</li>
+</ul>
+<h2>Quick actions</h2>
+<p>
+  <a class="btn" href="{{ url_for('transaction_new') }}">Record a sale</a>
+  <a class="btn secondary" href="{{ url_for('vehicle_new') }}">Add a vehicle</a>
+  <a class="btn secondary" href="{{ url_for('customer_new') }}">Add a customer</a>
+</p>
+{% endblock %}

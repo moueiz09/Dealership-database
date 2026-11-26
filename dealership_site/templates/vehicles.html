@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Vehicles{% endblock %}
+{% block content %}
+<h1>Vehicles</h1>
+<p class="toolbar"><a class="btn" href="{{ url_for('vehicle_new') }}">Add vehicle</a></p>
+<div class="table-wrap">
+<table>
+  <caption>All vehicles, new and used</caption>
+  <thead><tr>
+    <th scope="col">VIN</th><th scope="col">Vehicle</th><th scope="col">Color</th><th scope="col">Type</th>
+    <th scope="col">Details</th><th scope="col">Status</th><th scope="col">Actions</th>
+  </tr></thead>
+  <tbody>
+  {% for r in rows %}
+  <tr>
+    <th scope="row">{{ r.VIN }}</th>
+    <td>{{ r.VehicleYear }} {{ r.Make }} {{ r.Model }}</td>
+    <td>{{ r.Color }}</td>
+    <td>{{ r.Type }}</td>
+    <td>
+      {% if r.Type == 'New' %}MSRP ${{ '{:,}'.format(r.MSRP) }}; {{ r.ManufacturerSpecial }}
+      {% elif r.Type == 'Used' %}{{ '{:,}'.format(r.Mileage) }} miles; warranty: {{ r.FactoryWarranty or 'none' }}; dealer paid ${{ '{:,}'.format(r.TotalMoneySpent) }}
+      {% endif %}
+    </td>
+    <td>{{ r.Status }}</td>
+    <td class="actions">
+      <a href="{{ url_for('vehicle_edit', vin=r.VIN) }}">Edit<span class="sr-only"> {{ r.VIN }}</span></a>
+      <form method="post" action="{{ url_for('vehicle_delete', vin=r.VIN) }}" onsubmit="return confirm('Delete this vehicle?')">
+        <button class="danger" type="submit" aria-label="Delete vehicle {{ r.VIN }}">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7">No vehicles yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Reports</h1>
+
+<h2 id="perf">Salesperson performance</h2>
+<p class="hint">Sales Metrics is defined as the number of vehicles a salesperson has sold, kept in sync with their sales.</p>
+<div class="table-wrap">
+<table aria-labelledby="perf">
+  <thead><tr><th scope="col">Salesperson</th><th scope="col">Manager</th><th scope="col">Vehicles sold</th><th scope="col">Revenue</th></tr></thead>
+  <tbody>
+  {% for r in perf %}
+  <tr><th scope="row">{{ r.Name }}</th><td>{{ r.ManagerName }}</td><td>{{ r.VehiclesSold }}</td><td>${{ '{:,}'.format(r.Revenue) }}</td></tr>
+  {% else %}<tr><td colspan="4">No salespeople yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2 id="inv">Available inventory</h2>
+<div class="table-wrap">
+<table aria-labelledby="inv">
+  <thead><tr><th scope="col">VIN</th><th scope="col">Vehicle</th><th scope="col">Color</th><th scope="col">Type</th></tr></thead>
+  <tbody>
+  {% for r in inventory %}
+  <tr><th scope="row">{{ r.VIN }}</th><td>{{ r.VehicleYear }} {{ r.Make }} {{ r.Model }}</td><td>{{ r.Color }}</td><td>{{ r.Type }}</td></tr>
+  {% else %}<tr><td colspan="4">No vehicles are available.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+
+<h2 id="hist">Customer purchase history</h2>
+<div class="table-wrap">
+<table aria-labelledby="hist">
+  <thead><tr><th scope="col">Customer</th><th scope="col">Vehicle</th><th scope="col">Date</th><th scope="col">Amount</th></tr></thead>
+  <tbody>
+  {% for r in history %}
+  <tr><th scope="row">{{ r.Name }}</th><td>{{ r.Vehicle }}</td><td>{{ r.SalesDate }}</td><td>${{ '{:,}'.format(r.Amount) }}</td></tr>
+  {% else %}<tr><td colspan="4">No purchases yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
